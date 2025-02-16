@@ -1,11 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-<<<<<<< HEAD
+
   <name>motion_package</name>
-=======
-  <name>lidar_package</name>
->>>>>>> 410d0577188fc0624ad7e781d4f2da53c5524885
+
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="zinlinhtun34@gmail.com">zin</maintainer>
