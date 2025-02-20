@@ -1,3 +1,5 @@
+import time
+import datetime
 import rclpy
 from rclpy.node import Node
 from annex_msgs.msg import Vcu2ai, Ai2vcu
@@ -7,7 +9,7 @@ import os
 
 PKG_NAME = "motion_package"
 LOG = "data_logs"
-FILE = "odometry.csv"
+FILE = f"odometry{datetime.datetime.now()}.csv"
 
 
 class GazeboOdometryNode(Node):
@@ -16,8 +18,11 @@ class GazeboOdometryNode(Node):
         # initiate vars
         self.logger = self.get_logger()
         # initiate log file
-        self.log_file = os.path.join(get_package_prefix(PKG_NAME),LOG, FILE)
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        self.log_file = os.path.join(current_directory, LOG, FILE)
         self.mode = "a+" if os.path.isfile(self.log_file) else "w+"
+        self.time = time.time()
+        self._sub_pub()
 
     # subscription and publishing
     def _sub_pub(self):
@@ -34,10 +39,14 @@ class GazeboOdometryNode(Node):
         or_y = msg.pose.pose.orientation.y
         or_z = msg.pose.pose.orientation.z
 
+        # time elapsed
+        current_time = time.time()
+        lapsed = current_time - self.time
+
         # automatic closing after block
         with open(self.log_file, 'a+') as file:
             self.logger.info(f"File '{self.log_file}' opened successfully in mode '{self.mode}'.")
-            file.write(f"{x},{y},{z},{or_x},{or_y},{or_z}\n")
+            file.write(f"{x},{y},{z},{or_x},{or_y},{or_z},{lapsed}\n")
 
 
 # main method

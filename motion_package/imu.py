@@ -4,10 +4,12 @@ from annex_msgs.msg import Vcu2ai, Ai2vcu
 from sensor_msgs.msg import Imu
 from ament_index_python.packages import get_package_prefix
 import os
+import time
+import datetime
 
 PKG_NAME = "motion_package"
 LOG = "data_logs"
-FILE = "imu.csv"
+FILE = f"imu{datetime.datetime.now()}.csv"
 
 
 class GazeboIMUNode(Node):
@@ -16,8 +18,11 @@ class GazeboIMUNode(Node):
         # initiate vars
         self.logger = self.get_logger()
         # initiate log file
-        self.log_file = os.path.join(get_package_prefix(PKG_NAME),LOG, FILE)
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        self.log_file = os.path.join(current_directory,LOG, FILE)
         self.mode = "a+" if os.path.isfile(self.log_file) else "w+"
+        self.time = time.time()
+        self._sub_pub()
 
     # subscription and publishing
     def _sub_pub(self):
@@ -34,10 +39,14 @@ class GazeboIMUNode(Node):
         rot_y = msg.angular_velocity.y
         rot_z = msg.angular_velocity.z
 
+        # time elapsed
+        current_time = time.time()
+        lapsed = current_time - self.time
+
         # automatic closing after block
         with open(self.log_file, 'a+') as file:
             self.logger.info(f"File '{self.log_file}' opened successfully in mode '{self.mode}'.")
-            file.write(f"{acc_x},{acc_y},{acc_z},{rot_x},{rot_y},{rot_z}\n")
+            file.write(f"{acc_x},{acc_y},{acc_z},{rot_x},{rot_y},{rot_z},{lapsed}\n")
 
 
 
