@@ -23,7 +23,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'motion=motion_package.motion:main'
+            'imu=motion_package.imu:main'
         ],
     },
 )
