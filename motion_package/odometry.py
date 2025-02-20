@@ -1,18 +1,18 @@
 import rclpy
 from rclpy.node import Node
 from annex_msgs.msg import Vcu2ai, Ai2vcu
-from sensor_msgs.msg import Imu
+from nav_msgs.msg import Odometry
 from ament_index_python.packages import get_package_prefix
 import os
 
 PKG_NAME = "motion_package"
 LOG = "data_logs"
-FILE = "imu.csv"
+FILE = "odometry.csv"
 
 
-class GazeboIMUNode(Node):
+class GazeboOdometryNode(Node):
     def __init__(self):
-        super().__init__('IMU_node')
+        super().__init__('Odometry_node')
         # initiate vars
         self.logger = self.get_logger()
         # initiate log file
@@ -21,32 +21,30 @@ class GazeboIMUNode(Node):
 
     # subscription and publishing
     def _sub_pub(self):
-        self.create_subscription(Imu, "model/adsmt/imu", self.imu_callback, 10)
+        self.create_subscription(Odometry, "model/adsmt/odometry", self.odometry_callback, 10)
 
     # IMU callback: called everytime the IMU data is published
-    def imu_callback(self, msg: Imu):
+    def odometry_callback(self, msg: Odometry):
         # investigate data
-        acc_x = msg.linear_acceleration.x
-        acc_y = msg.linear_acceleration.y
-        acc_z = msg.linear_acceleration.z
+        x = msg.pose.pose.position.x
+        y = msg.pose.pose.position.x
+        z = msg.pose.pose.position.x
 
-        rot_x = msg.angular_velocity.x
-        rot_y = msg.angular_velocity.y
-        rot_z = msg.angular_velocity.z
+        or_x = msg.pose.pose.orientation.x
+        or_y = msg.pose.pose.orientation.y
+        or_z = msg.pose.pose.orientation.z
 
         # automatic closing after block
         with open(self.log_file, 'a+') as file:
             self.logger.info(f"File '{self.log_file}' opened successfully in mode '{self.mode}'.")
-            file.write(f"{acc_x},{acc_y},{acc_z},{rot_x},{rot_y},{rot_z}\n")
-
+            file.write(f"{x},{y},{z},{or_x},{or_y},{or_z}\n")
 
 
 # main method
 def main(args=None):
     rclpy.init(args=args)
 
-    imu = GazeboIMUNode()
-
+    imu = GazeboOdometryNode()
     rclpy.spin(imu)
 
     # Destroy the node explicitly

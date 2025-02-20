@@ -23,7 +23,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'imu=motion_package.imu:main'
+            'imu=motion_package.imu:main',
+            'odometry=motion_package.odometry:main',
         ],
     },
 )
