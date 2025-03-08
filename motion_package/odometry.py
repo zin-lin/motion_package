@@ -32,8 +32,8 @@ class GazeboOdometryNode(Node):
     def odometry_callback(self, msg: Odometry):
         # investigate data
         x = msg.pose.pose.position.x
-        y = msg.pose.pose.position.x
-        z = msg.pose.pose.position.x
+        y = msg.pose.pose.position.y
+        z = msg.pose.pose.position.z
 
         or_x = msg.pose.pose.orientation.x
         or_y = msg.pose.pose.orientation.y
